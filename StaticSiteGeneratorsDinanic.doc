@@ -1,0 +1,69 @@
+import { GetStaticPaths, GetStaticProps } from "next"
+import { useRouter } from "next/router"
+import Products from "../products/[slug]";
+
+interface IProduct {
+  id: string;
+  title: string;
+}
+
+interface ICategory {
+  id: string;
+  title: string;
+}
+
+interface CategoryProps {
+  products: IProduct[];
+}
+
+export default function Category({ products }: CategoryProps) {
+  const router = useRouter();
+
+  return (
+    <div>
+      <h1>{router.query.slug}</h1>
+
+      <ul>
+        {products.map(product => (
+          <li key={product.id}>
+            {product.title}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/* Registra todas as categorias */
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const response = await fetch(`http://localhost:3333/categories`);
+  const categories:ICategory[] = await response.json();
+
+  const paths = categories.map(category => {
+    return {
+      params: { slug: category.id }
+    }
+  });
+
+  return {
+    paths,
+    fallback: false, /* Se a rota nao foi gerada no momento da buil, ela gera de forma automatica */
+  }
+}
+
+/* Static Site Generators => Site estaticos dinamicos */
+
+export const getStaticProps: GetStaticProps<CategoryProps> = async (context) => {
+  const { slug } = context.params;
+
+  const response = await fetch(`http://localhost:3333/products?category_id=${slug}`);
+  const products = await response.json();
+  
+  return {
+    props: {
+      products,
+    },
+    revalidate: 60, /* Atualiza os dados da pagina estatica a cada 60 segundos */
+  }
+}

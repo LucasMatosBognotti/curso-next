@@ -1,0 +1,5 @@
+- Rotas
+ - Nao precisa de usar biblioteca pra prazer o roteamento entre rotas.
+ - Dentro de pages, cria um arquivo e automaticamento ele faz o roteamento.
+ - Arquivo que esta dentro de pages que inicia com '_' o next ignora, e considera como um aquivo normal, nao como rota.
+ - 

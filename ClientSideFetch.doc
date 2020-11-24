@@ -1,0 +1,42 @@
+import { useEffect, useState } from 'react';
+
+import { Title } from '../styles/pages/Home';
+
+interface IProduct {
+  id: number;
+  title: string;
+}
+
+export default function Home() {
+  const [recommendedProducts, setRecommendedProducts] = useState<IProduct[]>([]);
+
+  
+  Browser <--> Next <--> Backend
+  
+
+  Client Side Fetch => Nao é indexado pelo motor de busca
+  
+  useEffect(() => {
+    fetch('http://localhost:3333/recommended').then(response => {
+      response.json().then(data => {
+        setRecommendedProducts(data);
+      });
+    });
+  }, []);
+
+  return (
+    <div>
+      <section>
+        <Title>Products</Title>
+
+        <ul>
+          {recommendedProducts.map(product => (
+            <li key={product.id}>
+              {product.title}
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
+  );
+};
